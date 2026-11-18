@@ -40,12 +40,12 @@ Abre http://127.0.0.1:8088 en la máquina que ejecuta Docker. Puedes cambiar el 
 
 ### EasyPanel
 
-Crea dos servicios dentro del mismo proyecto de EasyPanel que GameTable. En ambos, usa el repositorio como origen y `lefcito` como contexto de compilación.
+Crea dos servicios **App** dentro del mismo proyecto de EasyPanel que GameTable. En ambos, usa el repositorio como origen, indica `/lefcito` en **Build Path** y selecciona el builder **Dockerfile**. Para un repositorio privado, configura en EasyPanel el acceso de lectura al repositorio.
 
 | Servicio | Dockerfile | Puerto interno | Configuración |
 | --- | --- | ---: | --- |
-| Backend | `Dockerfile.backend` | 8080 | Agrega la cadena Npgsql como variable privada `ConnectionStrings__Postgres`. Usa `Host=n8n_gametable;Port=5432;Database=GameTable` para la red interna. |
-| Frontend | `Dockerfile.frontend` | 80 | Configura `BACKEND_ADDRESS` con el nombre interno del backend y sufijo `:8080`. Asocia el dominio solo al frontend. |
+| Backend | `Dockerfile.backend` | 8080 | Monta un archivo privado con la cadena Npgsql y configura `ConnectionStrings__PostgresFile` con su ruta. Tiene que ser legible por el usuario del contenedor. Para la red interna usa `Host=n8n_gametable;Port=5432;Database=GameTable;SSL Mode=Disable` y las credenciales de ese servicio. Elimina el dominio automático del backend si EasyPanel lo crea. |
+| Frontend | `Dockerfile.frontend` | 80 | Configura `BACKEND_ADDRESS` con el nombre interno del backend y sufijo `:8080`. Asocia el dominio solo al frontend y protégelo con HTTPS y el control de acceso de EasyPanel. |
 
 Si la base dedicada aún no tiene el esquema de Lefcito, ejecuta una vez `dotnet Lefcito.dll --init-db` desde la consola del backend. Luego comprueba `/api/jugadores` a través del frontend.
 
